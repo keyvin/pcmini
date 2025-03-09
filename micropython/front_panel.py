@@ -1,3 +1,8 @@
+#Things I've learned -
+#Use streams, not input.
+#Don't use b'' on the micropython side
+
+
 from machine import Pin
 from button import Button
 import time
@@ -35,27 +40,41 @@ for i in range(0,16):
 
 
 def b1_callback():
-    print("button 1 pressed")
+    pass
+    #print("button 1 pressed")
 
     
 def b2_callback():
-    print("button 2 pressed")
+    pass
+    #print("button 2 pressed")
 
-b1 = Button(b1_pin, b1_callback, 1, 200, pullup=False)
+b1 = Button(b1_pin, b1_callback, 1, 5, pullup=False)
 b2 = Button(b2_pin, b2_callback, debounce_ms=1, long_press_ms=5, pullup=False)
 
-print("Hello World!")
 
 a = Pin(20,Pin.IN)
 
+class BlinkDot:
+    def __init__(self, dot_pin, interval=1000):
+        self.pin = dot_pin
+        self.time_since_switch = time.ticks_ms()
+        self.interval = interval
+    def checkBlink(self):        
+        if time.ticks_diff(time.ticks_ms(), self.time_since_switch) > self.interval:
+            self.pin.toggle()
+            self.time_since_switch = time.ticks_ms()
+
 def blank_segments():
-    pass
+    for i in segment_pins:
+        i.on()
+        
 def stop_emulator():
     pass
 
 
-#reverse for C.A. vs C.C.
 
+
+#reverse for C.A. vs C.C.
 def out_digit(digit1,digit2, segment1, segment2):
     for i in range(0,15):
         segment_pins[i].on()    
@@ -71,12 +90,14 @@ connecting = 2
 connected = 3
 emulator_active = 4
 
-is_switch_on = True
-state =  emulator_active
+is_switch_on = False
+state =  switched_off
 
 
 timeout_count = 0
 
+blink_dot1 = BlinkDot(segment_pins[8], 1000)
+blink_dot1.checkBlink()
 
 #assumes
 
@@ -91,10 +112,9 @@ while True:
     if switch.value() == switch_on and is_switch_on == False:
         time.sleep(.1) #debounce with a blocking sleep
         if switch.value() == switch_on:
-            print("ON!")
             is_switch_on = True
             state = connecting
-            print("C\n")
+            print("C")
     elif switch.value() == switch_off and is_switch_on == True:
         time.sleep(.1) #time debounce
         if switch.value() == switch_off:
@@ -106,38 +126,39 @@ while True:
     if is_switch_on:
         if state == connecting:
             #check if we've gotten anything in stdin (our serial)
-            if poll_input.poll(10000):
-                c = input()
-                print(c)
-                if c == "Connected!": #use newlines to avoid buffering issues
-                    print("Connected\n")
+            if poll_input.poll(100):
+                c = sys.stdin.read(1)                
+            
+                if c == "C": #use newlines to avoid buffering issues
+                    print("f")
                     state = connected
-                    print("E\n")
+                    print("E")
             else:
-                print ("C\n")
+                print ("C")
                 time.sleep(.1)
+                blink_dot.checkBlink()
             #update throbber if enough time has passed
         if state == connected:
-            if poll_input.poll(1000):
-                c = input()
-                if c == "Started!": #use newlines to avoid buffering issues
+            if poll_input.poll(100):
+                c = sys.stdin.read(1)
+                if c == "S": #use newlines to avoid buffering issues
                     state = emulator_active
                     timeout_count = 0
-                    print("S\n")
+                    print("S")
             else:
-                print ("S\n")
+                print ("E")
                 time.sleep(1)
                 
         if state == emulator_active:                        
 
             if poll_input.poll(1): #1s timeout
-                s=input()                
+                s=sys.stdin.read(1)
+                timeout_count = 0
             else:
-  
                 timeout_count = timeout_count + 1                 
                 if timeout_count == 10000:
                     state = connecting
-                    print("C\n")
+                    print("C")
             #parse status (speed, emulator type)
             #set 7segments
                 
