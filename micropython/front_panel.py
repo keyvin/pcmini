@@ -136,7 +136,7 @@ while True:
             else:
                 print ("C")
                 time.sleep(.1)
-                blink_dot.checkBlink()
+                blink_dot1.checkBlink()
             #update throbber if enough time has passed
         if state == connected:
             if poll_input.poll(100):
@@ -167,6 +167,6 @@ while True:
             #show speed:
             #check buttons:
             if b1.check():
-               out_digit(0,1,segment_1,segment_2)         
+               print("X")        
             if b2.check():
-                out_digit(0,2,segment_1,segment_2)   
+                print("Y")
