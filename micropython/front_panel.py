@@ -40,6 +40,7 @@ for i in range(0,16):
 
 
 def b1_callback():
+    print('M')
     pass
     #print("button 1 pressed")
 
@@ -48,8 +49,8 @@ def b2_callback():
     pass
     #print("button 2 pressed")
 
-b1 = Button(b1_pin, b1_callback, 1, 5, pullup=False)
-b2 = Button(b2_pin, b2_callback, debounce_ms=1, long_press_ms=5, pullup=False)
+b1 = Button(b1_pin, b1_callback, 1, long_press_ms = 1000, pullup=False)
+b2 = Button(b2_pin, b2_callback, debounce_ms=1, long_press_ms=1000, pullup=False)
 
 
 a = Pin(20,Pin.IN)
@@ -69,7 +70,7 @@ def blank_segments():
         i.on()
         
 def stop_emulator():
-    pass
+    print("Q")
 
 
 
@@ -103,7 +104,8 @@ blink_dot1.checkBlink()
 
 poll_input = uselect.poll()
 poll_input.register(sys.stdin, uselect.POLLIN)
-
+digits_to_read = 0
+in_digits = [0,0]
 #our mainloop
 
 while True:
@@ -159,6 +161,15 @@ while True:
                 if timeout_count == 10000:
                     state = connecting
                     print("C")
+            if s == 'D': #next two characters should be digits
+                digits_to_read = 2
+            elif digits_to_read > 0:        
+                in_digits[digits_to_read-1] = int(s.strip())
+                digits_to_read = digits_to_read -1
+                if digits_to_read == 0:
+                    out_digit(in_digits[0],in_digits[1],segment_1, segment_2)
+                
+                
             #parse status (speed, emulator type)
             #set 7segments
                 

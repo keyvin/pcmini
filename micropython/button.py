@@ -32,11 +32,12 @@ class Button():
                     self.button[1] = current      #todo mute beeper for day on softpress
                     self.button[2] = curr_ms
                     time.sleep(.1)
-
+                    return(True)
                 else:
                     self.button[1] = current      #hard press, report button press
                     if self.push_function:
                         self.push_function()
+                        return(False)
                     return(True)
             elif current == self.active:               #transition high to low, mark button held and ms_tick when pressed
                 self.button[1] = self.active            		#bouncing doesn't matter.
