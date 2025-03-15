@@ -46,7 +46,7 @@ def b1_callback():
 
     
 def b2_callback():
-    pass
+    print('R')
     #print("button 2 pressed")
 
 b1 = Button(b1_pin, b1_callback, 1, long_press_ms = 1000, pullup=False)
@@ -153,14 +153,18 @@ while True:
                 
         if state == emulator_active:                        
 
-            if poll_input.poll(1): #1s timeout
+            if poll_input.poll(1): #1ms timeout
                 s=sys.stdin.read(1)
+                if s == 'S':
+                    timeout_count = 0
                 timeout_count = 0
             else:
                 timeout_count = timeout_count + 1                 
-                if timeout_count == 10000:
-                    state = connecting
-                    print("C")
+            if timeout_count == 10000:
+                state = connecting
+                print("C")
+            elif timeout_count == 1000:
+                print('S')
             if s == 'D': #next two characters should be digits
                 digits_to_read = 2
             elif digits_to_read > 0:        
@@ -178,6 +182,6 @@ while True:
             #show speed:
             #check buttons:
             if b1.check():
-               print("X")        
+                print("X")        
             if b2.check():
                 print("Y")
