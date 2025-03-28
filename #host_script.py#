@@ -12,7 +12,14 @@ dosbox_x_speed_up = e.KEY_MINUS
 dosbox_x_speed_down = e.KEY_EQUAL
 dosbox_x_show_menu = e.KEY_C
 dosbox_x_reset = e.KEY_R
-s = serial.Serial('/dev/ttyACM0', 115200)
+s = serial.Serial('/dev/ttyACM8', 115200)
+
+
+
+#Protocol:
+#On startup, pico sends C
+#Host responds with C
+#Pico 
 
 
 def parse_speeds(line=None):
@@ -32,7 +39,7 @@ def parse_speeds(line=None):
             s.write(b'D12')
         elif speed >=1500 and speed <= 3300:
             s.write(b'D16')
-        elif speed > 3300 and speed < 12000:
+        elif speed >- 3300 and speed < 12000:
             s.write(b'D33')
         elif speed > 12000 and speed < 40000:
             s.write(b'D66')
@@ -58,7 +65,8 @@ def send_control(key1, key2):
     ui.syn()
     ui.close()
 
-try:
+#try:
+if __name__ == '__main__':
     while True:
         sleep(.11)
     # s.write(b'f')
@@ -77,8 +85,9 @@ try:
             s.write(b'S')
             s.write(b'D16')
             while True:
-                s.write(b's') #send keep alive
+                s.write(b'S') #send keep alive
                 input = s.read(1)
+                print(input)
                 if input == b'X':
                     print ("Speed Down")
                     send_control(dosbox_x_control_key, dosbox_x_speed_up)
@@ -101,5 +110,7 @@ try:
                     print("Reset VM")
                     send_control(dosbox_x_control_key, dosbox_x_reset)
             dbx.kill()
-except:
+
+#except ex:
+    #print (ex)
     dbx.kill()

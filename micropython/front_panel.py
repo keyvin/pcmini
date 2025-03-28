@@ -49,11 +49,11 @@ def b2_callback():
     print('R')
     #print("button 2 pressed")
 
-b1 = Button(b1_pin, b1_callback, 1, long_press_ms = 1000, pullup=False)
-b2 = Button(b2_pin, b2_callback, debounce_ms=1, long_press_ms=1000, pullup=False)
+b1 = Button(b1_pin, b1_callback, debounce_ms=1, long_press_ms = 1000, pullup=True)
+b2 = Button(b2_pin, b2_callback, debounce_ms=1, long_press_ms=1000, pullup=True)
 
 
-a = Pin(20,Pin.IN)
+
 
 class BlinkDot:
     def __init__(self, dot_pin, interval=1000):
@@ -160,7 +160,7 @@ while True:
                 timeout_count = 0
             else:
                 timeout_count = timeout_count + 1                 
-            if timeout_count == 10000:
+            if timeout_count == 100000:
                 state = connecting
                 print("C")
             elif timeout_count == 1000:

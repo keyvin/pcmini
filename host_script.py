@@ -12,7 +12,7 @@ dosbox_x_speed_up = e.KEY_MINUS
 dosbox_x_speed_down = e.KEY_EQUAL
 dosbox_x_show_menu = e.KEY_C
 dosbox_x_reset = e.KEY_R
-s = serial.Serial('/dev/ttyACM8', 115200)
+s = serial.Serial('/dev/ttyACM0', 115200)
 
 
 def parse_speeds(line=None):
@@ -24,18 +24,32 @@ def parse_speeds(line=None):
         line = line.split(' ')[0]
         print(line)
         speed = int(line)
-        if speed<300:
-            s.write(b'D04')
-        elif speed >= 300 and speed <1000:
-            s.write(b'D08')
-        elif speed >=1000 and speed < 1500:
-            s.write(b'D12')
-        elif speed >=1500 and speed <= 3300:
-            s.write(b'D16')
-        elif speed >- 3300 and speed < 12000:
-            s.write(b'D33')
-        elif speed > 12000 and speed < 40000:
-            s.write(b'D66')
+        match speed:
+            case 240:
+                s.write(b'D04')
+            case 750:   
+                s.write(b'D08')
+            case 1510:
+                s.write(b'D12')
+            case 3000:
+                s.write(b'20')
+            case 3300:
+                s.write(b'22')
+            case 4595:
+                s.write(b'25')
+            case 6075:
+                s.write(b'33')
+            case 12019:
+                s.write(b'36')
+            case 23880:
+                s.write(b'60')
+            case 33445:
+                s.write(b'66')
+            case 43500:
+                s.write(b'75')
+            case 97240:
+                s.write(b'99')
+        
     #LOG: CPU:3300 cycles (auto)
 
 #leaving this interesting snippit
@@ -86,7 +100,6 @@ if __name__ == '__main__':
                     send_control(dosbox_x_control_key, dosbox_x_speed_up)
                     sleep(.1)
                     msg = dbx.stderr.readlines()
-
                     parse_speeds(msg[-1])
                 if input == b'Y':
                     print ("speed Up")
