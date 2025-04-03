@@ -76,8 +76,8 @@ def stop_emulator():
 
 
 #reverse for C.A. vs C.C.
-def out_digit(digit1,digit2, segment1, segment2):
-    for i in range(0,15):
+def out_digit(digit2,digit1, segment2, segment1):
+    for i in range(0,16):
         segment_pins[i].on()    
         
     for i in digits[digit1]:        
