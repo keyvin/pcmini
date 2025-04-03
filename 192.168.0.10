@@ -32,23 +32,23 @@ def parse_speeds(line=None):
             case 1510:
                 s.write(b'D12')
             case 3000:
-                s.write(b'D20')
+                s.write(b'20')
             case 3300:
-                s.write(b'D22')
+                s.write(b'22')
             case 4595:
-                s.write(b'D25')
+                s.write(b'25')
             case 6075:
-                s.write(b'D33')
+                s.write(b'33')
             case 12019:
-                s.write(b'D36')
+                s.write(b'36')
             case 23880:
-                s.write(b'D60')
+                s.write(b'60')
             case 33445:
-                s.write(b'D66')
+                s.write(b'66')
             case 43500:
-                s.write(b'D75')
+                s.write(b'75')
             case 97240:
-                s.write(b'D99')
+                s.write(b'99')
         
     #LOG: CPU:3300 cycles (auto)
 
